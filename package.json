@@ -1,0 +1,8 @@
+{
+  "name": "taciturne-demo-server",
+  "private": true,
+  "version": "1.0.0",
+  "description": "Serveur de démonstration Taciturne Delivery (mock API /v1)",
+  "engines": { "node": ">=20" },
+  "scripts": { "start": "node server.mjs" }
+}
