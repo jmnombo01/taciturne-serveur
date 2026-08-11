@@ -115,6 +115,12 @@ export function registerRideRoutes(routes) {
       return [200, open.map((r) => ({ ...view(r, 'driver'), pickupCode: undefined }))];
     },
 
+    'GET /v1/rides/active': (b, q, p, h) => {
+      const u = bearer(h); if (!u) return UNAUTH;
+      const r = [...rides.values()].reverse().find((x) => x.driver?.userId === u.id && !['COMPLETED', 'CANCELLED'].includes(x.status));
+      return [200, r ? ({ ...view(r, 'driver'), pickupCode: undefined }) : null];
+    },
+
     'GET /v1/rides/:id': (b, q, p, h) => {
       const u = bearer(h); if (!u) return UNAUTH;
       const r = rides.get(p.id);
