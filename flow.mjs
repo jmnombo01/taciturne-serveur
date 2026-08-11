@@ -156,6 +156,7 @@ const orderView = (o, forPartner = false) => ({
   })(),
 });
 
+export const flowCtx = {}; // rempli en fin de fichier
 export function registerFlowRoutes(routes) {
   Object.assign(routes, {
     'POST /v1/auth/otp/request': (b) => {
@@ -542,3 +543,6 @@ export function registerFlowRoutes(routes) {
     },
   });
 }
+
+// Contexte partagé avec rides.mjs (modules du serveur de démo)
+Object.assign(flowCtx, { sessions, flowUsers, flowWallets, driverOnline, bearer, rnd4, h2km, UNAUTH });

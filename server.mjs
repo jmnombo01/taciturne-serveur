@@ -13,6 +13,7 @@
  */
 import http from 'node:http';
 import { registerFlowRoutes } from './flow.mjs';
+import { registerRideRoutes } from './rides.mjs';
 
 const PORT = Number(process.env.PORT || 3001);
 const now = Date.now();
@@ -268,6 +269,7 @@ const routes = {
 };
 
 registerFlowRoutes(routes);
+registerRideRoutes(routes);
 
 const server = http.createServer((req, res) => {
   res.setHeader('Access-Control-Allow-Origin', '*');
