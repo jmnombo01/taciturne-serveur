@@ -6,6 +6,21 @@ export function getToken(): string | null {
   return typeof window !== 'undefined' ? localStorage.getItem('adminToken') : null;
 }
 
+/// fetch avec réessais automatiques — absorbe le réveil à froid du serveur
+/// gratuit (Render s'endort après ~15 min, ~40 s pour se réveiller).
+export async function apiFetch(input: string, init: RequestInit = {}, tries = 4): Promise<Response> {
+  let lastErr: any;
+  for (let i = 0; i < tries; i++) {
+    try {
+      return await fetch(input, init);
+    } catch (err: any) {
+      lastErr = err;
+      if (i < tries - 1) await new Promise((r) => setTimeout(r, 5000 * (i + 1)));
+    }
+  }
+  throw lastErr;
+}
+
 export async function api<T = any>(path: string, options: RequestInit = {}): Promise<T> {
   const headers: Record<string, string> = {
     'Content-Type': 'application/json',
@@ -14,7 +29,7 @@ export async function api<T = any>(path: string, options: RequestInit = {}): Pro
   const token = getToken();
   if (token) headers['Authorization'] = `Bearer ${token}`;
 
-  const res = await fetch(`${API}${path}`, { ...options, headers });
+  const res = await apiFetch(`${API}${path}`, { ...options, headers });
   if (res.status === 401 && typeof window !== 'undefined') {
     localStorage.removeItem('adminToken');
     window.location.href = '/login';

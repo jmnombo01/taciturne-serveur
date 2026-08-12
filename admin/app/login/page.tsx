@@ -2,8 +2,9 @@
 
 import { useRouter } from 'next/navigation';
 import { useState } from 'react';
+import { apiFetch } from '../../lib/api';
 
-const API = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3000/v1';
+const API = process.env.NEXT_PUBLIC_API_URL || '/backend/v1';
 
 export default function LoginPage() {
   const router = useRouter();
@@ -17,7 +18,7 @@ export default function LoginPage() {
     setBusy(true);
     setError('');
     try {
-      const res = await fetch(`${API}/admin/auth/login`, {
+      const res = await apiFetch(`${API}/admin/auth/login`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ email, password }),
@@ -27,7 +28,9 @@ export default function LoginPage() {
       localStorage.setItem('adminToken', data.accessToken);
       router.replace('/dashboard');
     } catch (err: any) {
-      setError(err.message);
+      setError(err?.message === 'Failed to fetch'
+        ? 'Serveur en cours de réveil — réessayez dans 40 secondes.'
+        : err.message);
     } finally {
       setBusy(false);
     }
